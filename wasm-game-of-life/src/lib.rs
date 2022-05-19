@@ -149,6 +149,28 @@ impl Universe {
         let index = self.get_index(row, column);
         self.cells[index].toggle();
     }
+
+    pub fn reset(&mut self) {
+        for cell in self.cells.iter_mut() {
+            *cell = Cell::Dead;
+        }
+        log!("Reset all Cells to Dead!");
+    }
+
+    pub fn start(&mut self) {
+        // 随机生成 Cell 状态
+        let cells = (0..self.width * self.height)
+            .map(|_| {
+                if js_sys::Math::random() < 0.5 {
+                    Cell::Alive
+                } else {
+                    Cell::Dead
+                }
+            })
+            .collect();
+
+        self.cells = cells;
+    }
 }
 
 impl Universe {
