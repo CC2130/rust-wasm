@@ -44,6 +44,15 @@ pub enum Cell {
     Alive = 1,
 }
 
+impl Cell {
+    fn toggle(&mut self) {
+        *self = match *self {
+            Cell::Dead => Cell::Alive,
+            Cell::Alive => Cell::Dead,
+        };
+    }
+}
+
 
 /// 比如，一个三行三列的 Universe, 
 /// [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ]
@@ -109,10 +118,10 @@ impl Universe {
     pub fn tick(&mut self) {
         let mut next = self.cells.clone();
         for row in 0..self.height {
-            for col in 0..self.width {
-                let index = self.get_index(row, col);
+            for column in 0..self.width {
+                let index = self.get_index(row, column);
                 let cell = self.cells[index];
-                let live_neighbors = self.live_neighbor_count(row, col);
+                let live_neighbors = self.live_neighbor_count(row, column);
 
                 //let state = cell;
 
@@ -126,7 +135,7 @@ impl Universe {
 
                 // console.log
                 //if next_cell != state {
-                //    log!("the {} {} cell have transited from {:?} to {:?}", row, col, state, next_cell);
+                //    log!("the {} {} cell have transited from {:?} to {:?}", row, column, state, next_cell);
                 //}
 
                 next[index] = next_cell;
@@ -134,6 +143,11 @@ impl Universe {
         }
 
         self.cells = next;
+    }
+
+    pub fn toggle_cell(&mut self, row: u32, column: u32) {
+        let index = self.get_index(row, column);
+        self.cells[index].toggle();
     }
 }
 
@@ -168,8 +182,8 @@ impl Universe {
 
     /// 将数组中的 Cell 设置为存活状态
     pub fn set_cells(&mut self, cells: &[(u32, u32)]) {
-        for (row, col) in cells.iter().cloned() {
-            let index = self.get_index(row, col);
+        for (row, column) in cells.iter().cloned() {
+            let index = self.get_index(row, column);
             self.cells[index] = Cell::Alive;
         }
     }
