@@ -7,6 +7,7 @@ extern crate js_sys;
 
 extern crate web_sys;
 
+#[allow(unused_macros)]
 macro_rules! log {
     ( $( $t:tt )* ) => {
         web_sys::console::log_1(&format!( $( $t )* ).into());
@@ -113,7 +114,7 @@ impl Universe {
                 let cell = self.cells[index];
                 let live_neighbors = self.live_neighbor_count(row, col);
 
-                let state = cell;
+                //let state = cell;
 
                 let next_cell = match(cell, live_neighbors) {
                     (Cell::Alive, x) if x < 2 => Cell::Dead,
@@ -123,9 +124,10 @@ impl Universe {
                     (otherwise, _) => otherwise,
                 };
 
-                if next_cell != state {
-                    log!("the {} {} cell have transited from {:?} to {:?}", row, col, state, next_cell);
-                }
+                // console.log
+                //if next_cell != state {
+                //    log!("the {} {} cell have transited from {:?} to {:?}", row, col, state, next_cell);
+                //}
 
                 next[index] = next_cell;
             }
