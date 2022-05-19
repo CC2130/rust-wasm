@@ -74,8 +74,18 @@ impl Universe {
         self.width
     }
 
+    pub fn set_width(&mut self, width: u32) {
+        self.width = width;
+        self.cells = (0..self.width * self.height).map(|_| Cell::Dead).collect();
+    }
+
     pub fn height(&self) -> u32 {
         self.height
+    }
+
+    pub fn set_height(&mut self, height: u32) {
+        self.height = height;
+        self.cells = (0..self.width * self.height).map(|_| Cell::Dead).collect();
     }
 
     pub fn cells(&self) -> *const Cell {
@@ -86,6 +96,7 @@ impl Universe {
         self.to_string()
     }
 
+    /// 调用进行所有生命的状态更新
     pub fn tick(&mut self) {
         let mut next = self.cells.clone();
         for row in 0..self.height {
@@ -129,8 +140,22 @@ impl Universe {
         count
     }
 
+    /// 通过 row, column 获得在 self.cells 中的位置 id
     fn get_index(&self, row: u32, column: u32) -> usize {
         (row * self.width + column) as usize
+    }
+
+    /// 获取 self.cells 
+    pub fn get_cells(&self) -> &[Cell] {
+        &self.cells
+    }
+
+    /// 将数组中的 Cell 设置为存活状态
+    pub fn set_cells(&mut self, cells: &[(u32, u32)]) {
+        for (row, col) in cells.iter().cloned() {
+            let index = self.get_index(row, col);
+            self.cells[index] = Cell::Alive;
+        }
     }
 }
 
