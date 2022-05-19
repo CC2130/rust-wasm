@@ -8,7 +8,9 @@
   },
   "scripts": {
     "build": "webpack --config webpack.config.js",
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server",
+    "check": "npx eslint ./*.js",
+    "format": "npx prettier --config ./.prettierrc.json -uw ./*.js"
   },
   "repository": {
     "type": "git",
@@ -26,12 +28,21 @@
     "url": "https://github.com/rustwasm/create-wasm-app/issues"
   },
   "homepage": "https://github.com/rustwasm/create-wasm-app#readme",
-  "devDependencies": {
+  "dependencies": {
     "wasm-game-of-life": "file:../pkg",
     "hello-wasm-pack": "^0.1.0",
     "webpack": "^4.29.3",
     "webpack-cli": "^3.1.0",
-    "webpack-dev-server": "^3.1.5",
-    "copy-webpack-plugin": "^5.0.0"
+    "webpack-dev-server": "^3.1.5"
+  },
+  "devDependencies": {
+    "copy-webpack-plugin": "^5.0.0",
+    "@trivago/prettier-plugin-sort-imports": "^3.2.0",
+    "eslint": "^8.15.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-node": "-11.1.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-sort-exports": "^0.6.0",
+    "prettier": "^2.6.2"
   }
 }

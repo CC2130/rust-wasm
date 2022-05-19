@@ -1,8 +1,7 @@
 // Import the WebAssembly memory at the top of the file.
 // wasm-game-of-life/wasm_game_of_life_bg.wasm
+import { Cell, Universe } from "wasm-game-of-life";
 import { memory } from "wasm-game-of-life/wasm_game_of_life_bg";
-
-import { Universe, Cell } from "wasm-game-of-life";
 
 const CELL_SIZE = 5;
 const GRID_COLOR = "#CCCCCC";
@@ -18,42 +17,43 @@ const canvas = document.getElementById("game-of-life-canvas");
 const reset = document.getElementById("reset");
 const playPauseButton = document.getElementById("play-pause");
 const start = document.getElementById("start");
-const ctx = canvas.getContext('2d');
+const ctx = canvas.getContext("2d");
 
 canvas.height = (CELL_SIZE + 1) * height + 1;
 canvas.width = (CELL_SIZE + 1) * width + 1;
 
-reset.addEventListener("click", () => {
+reset.addEventListener("click", function () {
   universe.reset();
   drawGrid();
   drawCells();
+  pause();
 });
 
-start.addEventListener("click", () => {
+start.addEventListener("click", function () {
   universe.start();
-  drawGrid()
+  drawGrid();
   drawCells();
   requestAnimationFrame(renderLoop);
 });
 
-const isPaused = () => {
+function isPaused() {
   return animationid === null;
 }
 
-const play = () => {
-  console.log("Start animation!")
+function play() {
+  console.log("Start animation!");
   playPauseButton.textContent = "⏸";
   renderLoop();
 }
 
-const pause = () => {
-  console.log("Stop animation!")
+function pause() {
+  console.log("Stop animation!");
   playPauseButton.textContent = "▶";
   cancelAnimationFrame(animationid);
   animationid = null;
 }
 
-playPauseButton.addEventListener("click", () => {
+playPauseButton.addEventListener("click", function () {
   if (isPaused()) {
     play();
   } else {
@@ -61,16 +61,16 @@ playPauseButton.addEventListener("click", () => {
   }
 });
 
-const renderLoop = () => {
+function renderLoop() {
   universe.tick();
 
   drawGrid();
   drawCells();
 
   animationid = requestAnimationFrame(renderLoop);
-};
+}
 
-const drawGrid = () => {
+function drawGrid() {
   ctx.beginPath();
   ctx.strokeStyle = GRID_COLOR;
 
@@ -87,13 +87,13 @@ const drawGrid = () => {
   }
 
   ctx.stroke();
-};
+}
 
-const getIndex = (row, column) => {
+function getIndex(row, column) {
   return row * width + column;
-};
+}
 
-const drawCells = () => {
+function drawCells() {
   const cellsPtr = universe.cells();
   const cells = new Uint8Array(memory.buffer, cellsPtr, width * height);
 
@@ -103,25 +103,18 @@ const drawCells = () => {
     for (let col = 0; col < width; col++) {
       const idx = getIndex(row, col);
 
-      ctx.fillStyle = cells[idx] === Cell.Dead
-        ? DEAD_COLOR
-        : ALIVE_COLOR;
+      ctx.fillStyle = cells[idx] === Cell.Dead ? DEAD_COLOR : ALIVE_COLOR;
 
-      ctx.fillRect(
-        col * (CELL_SIZE + 1) + 1,
-        row * (CELL_SIZE + 1) + 1,
-        CELL_SIZE,
-        CELL_SIZE
-      );
+      ctx.fillRect(col * (CELL_SIZE + 1) + 1, row * (CELL_SIZE + 1) + 1, CELL_SIZE, CELL_SIZE);
     }
   }
 
   ctx.stroke();
-};
+}
 
-canvas.addEventListener("click", event => {
+canvas.addEventListener("click", function (event) {
   const boundingRect = canvas.getBoundingClientRect();
-  
+
   // 换算比例
   const scaleX = canvas.width / boundingRect.width;
   const scaleY = canvas.height / boundingRect.height;
@@ -132,7 +125,7 @@ canvas.addEventListener("click", event => {
 
   // 计算行列
   const row = Math.min(Math.floor(canvasTop / (CELL_SIZE + 1)), height - 1);
-  const col = Math.min(Math.floor(canvasLeft / (CELL_SIZE + 1)), width - 1)
+  const col = Math.min(Math.floor(canvasLeft / (CELL_SIZE + 1)), width - 1);
 
   universe.toggle_cell(row, col);
 
@@ -143,4 +136,3 @@ canvas.addEventListener("click", event => {
 drawGrid();
 drawCells();
 requestAnimationFrame(renderLoop);
-
