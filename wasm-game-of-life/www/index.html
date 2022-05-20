@@ -18,9 +18,17 @@
     </style>
   </head>
   <body>
+    <p>
     <button id="reset">Reset</button>
-    <button id="play-pause"></button>
+    <button id="play-pause">⏸</button>
     <button id="start">Start</button>
+    </p>
+    <p>
+    0 <input id="range" type="range" min="0" max="100" value="0"/> 100
+    </p>
+    <p>
+    当前值为：<span id="range-value">0</span>
+    </p>
     <canvas id="game-of-life-canvas"> </pre>
     <script type="module" src="./bootstrap.js"></script>
   </body>
