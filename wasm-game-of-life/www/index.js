@@ -19,7 +19,7 @@ const playPauseButton = document.getElementById("play-pause");
 const start = document.getElementById("start");
 const range = document.getElementById("range");
 const rangeValue = document.getElementById("range-value");
-let counter = range.value;
+let counter = 0;
 const ctx = canvas.getContext("2d");
 
 canvas.height = (CELL_SIZE + 1) * height + 1;
@@ -70,8 +70,51 @@ playPauseButton.addEventListener("click", function () {
   }
 });
 
+// 性能
+const fps = new (class {
+  constructor() {
+    this.fps = document.getElementById("fps");
+    this.frames = [];
+    this.lastFrameTimeStamp = performance.now();
+  }
+
+  render() {
+    const now = performance.now();
+    const delta = now - this.lastFrameTimeStamp;
+    this.lastFrameTimeStamp = now;
+    const fps = (1 / delta) * 1000;
+
+    // 只保存最近100次的时间
+    this.frames.push(fps);
+    if (this.frames.length > 100) {
+      this.frames.shift();
+    }
+
+    let min = Infinity;
+    let max = -Infinity;
+    let sum = 0;
+    for (let i = 0; i < this.frames.length; i++) {
+      sum += this.frames[i];
+      min = Math.min(this.frames[i], min);
+      max = Math.max(this.frames[i], max);
+    }
+
+    let mean = sum / this.frames.length;
+
+    // 显示数据
+    this.fps.textContent = `
+Frames per Second:
+           last = ${Math.round(fps)}
+avg of last 100 = ${Math.round(mean)}
+min of last 100 = ${Math.round(min)}
+max of last 100 = ${Math.round(max)}
+`.trim();
+  }
+})();
+
 function renderLoop() {
   if (counter < range.value || range.value == 0) {
+    fps.render();
     universe.tick();
     counter += 1;
 
