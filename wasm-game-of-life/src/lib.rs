@@ -1,7 +1,6 @@
 mod utils;
 
 use std::fmt;
-use std::time::SystemTime;
 use wasm_bindgen::prelude::*;
 
 use rand::prelude::*;
@@ -193,18 +192,55 @@ impl Universe {
 impl Universe {
     fn live_neighbor_count(&self, row: u32, column: u32) -> u8 {
         let mut count = 0;
-        for delta_row in [self.height - 1, 0, 1].iter().cloned() {
-            for delta_column in [self.width - 1, 0, 1].iter().cloned() {
-                if delta_row == 0 && delta_column == 0 {
-                    continue;
-                }
 
-                let neighbor_row = (row + delta_row) % self.height;
-                let neighbor_column = (column + delta_column) % self.width;
-                let index = self.get_index(neighbor_row, neighbor_column);
-                count += self.cells[index] as u8;
-            }
-        }
+        //  上下左右四个方位
+        let north = if row == 0 {
+            self.height - 1
+        } else {
+            row - 1
+        };
+
+        let south = if row == self.height - 1 {
+            0
+        } else {
+            row + 1
+        };
+
+        let west = if column == 0 {
+            self.width - 1
+        } else {
+            column - 1
+        };
+
+        let east = if column == self.width - 1 {
+            0
+        } else {
+            column + 1
+        };
+
+        let n = self.get_index(north, column);
+        count += self.cells[n] as u8;
+
+        let ne = self.get_index(north, east);
+        count += self.cells[ne] as u8;
+
+        let e = self.get_index(row, east);
+        count += self.cells[e] as u8;
+
+        let se = self.get_index(south, east);
+        count += self.cells[se] as u8;
+
+        let s = self.get_index(south, column);
+        count += self.cells[s] as u8;
+
+        let ws = self.get_index(south, west);
+        count += self.cells[ws] as u8;
+
+        let w = self.get_index(row, west);
+        count += self.cells[w] as u8;
+
+        let nw = self.get_index(north, west);
+        count += self.cells[nw] as u8;
 
         count
     }
