@@ -4,7 +4,7 @@ use std::fmt;
 use std::time::SystemTime;
 use wasm_bindgen::prelude::*;
 
-extern crate js_sys;
+use rand::prelude::*;
 
 extern crate web_sys;
 use web_sys::console;
@@ -91,22 +91,17 @@ impl Universe {
         let width = 64;
         let height = 64;
 
-        // 随机生成 Cell 状态
-        let cells = (0..width * height)
-            .map(|_| {
-                if js_sys::Math::random() < 0.5 {
-                    Cell::Alive
-                } else {
-                    Cell::Dead
-                }
-            })
-            .collect();
-
-        Universe {
+        let cells = vec![];
+        let mut universe = Universe {
             width,
             height,
             cells,
-        }
+        };
+
+        // 随机生成 Cell 状态
+        universe.start();
+
+        universe
     }
 
     pub fn width(&self) -> u32 {
@@ -137,7 +132,7 @@ impl Universe {
 
     /// 调用进行所有生命的状态更新
     pub fn tick(&mut self) {
-        let _time = Timer::new("Universe::tick");
+        //let _time = Timer::new("Universe::tick");
         let mut next = self.cells.clone();
         for row in 0..self.height {
             for column in 0..self.width {
@@ -183,7 +178,7 @@ impl Universe {
         // 随机生成 Cell 状态
         let cells = (0..self.width * self.height)
             .map(|_| {
-                if js_sys::Math::random() < 0.5 {
+                if random() {
                     Cell::Alive
                 } else {
                     Cell::Dead
