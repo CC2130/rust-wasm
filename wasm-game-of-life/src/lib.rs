@@ -82,6 +82,7 @@ pub struct Universe {
     width: u32,
     height: u32,
     cells: Vec<Cell>,
+    _cells: Vec<Cell>,
 }
 
 #[wasm_bindgen]
@@ -91,10 +92,12 @@ impl Universe {
         let height = 64;
 
         let cells = vec![];
+        let _cells = vec![];
         let mut universe = Universe {
             width,
             height,
             cells,
+            _cells,
         };
 
         // 随机生成 Cell 状态
@@ -132,7 +135,7 @@ impl Universe {
     /// 调用进行所有生命的状态更新
     pub fn tick(&mut self) {
         //let _time = Timer::new("Universe::tick");
-        let mut next = self.cells.clone();
+        //let mut next = self.cells.clone();
         for row in 0..self.height {
             for column in 0..self.width {
                 let index = self.get_index(row, column);
@@ -154,28 +157,30 @@ impl Universe {
                 //    log!("the {} {} cell have transited from {:?} to {:?}", row, column, state, next_cell);
                 //}
 
-                next[index] = next_cell;
+                self._cells[index] = next_cell;
             }
         }
 
-        self.cells = next;
+        self.cells = self._cells.clone();
     }
 
     pub fn toggle_cell(&mut self, row: u32, column: u32) {
         let index = self.get_index(row, column);
         self.cells[index].toggle();
+        self._cells[index].toggle();
     }
 
     pub fn reset(&mut self) {
         for cell in self.cells.iter_mut() {
             *cell = Cell::Dead;
         }
+        self._cells = self.cells.clone();
         log!("Reset all Cells to Dead!");
     }
 
     pub fn start(&mut self) {
         // 随机生成 Cell 状态
-        let cells = (0..self.width * self.height)
+        let cells: Vec<Cell> = (0..self.width * self.height)
             .map(|_| {
                 if random() {
                     Cell::Alive
@@ -185,6 +190,7 @@ impl Universe {
             })
             .collect();
 
+        self._cells = cells.clone();
         self.cells = cells;
     }
 }
